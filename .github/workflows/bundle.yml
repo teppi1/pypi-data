@@ -69,5 +69,6 @@ jobs:
           draft: false
           name: "${{ steps.current-time.outputs.formattedTime }}"
           tag_name: "latest"
+          target_commitish: "empty"
           files: 'pypi-data.sqlite.gz'
           body: Automated bundling of release data into a sqlite database. See the readme for more information.
