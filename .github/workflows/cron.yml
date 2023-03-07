@@ -10,6 +10,7 @@ jobs:
   release-data:
     name: Release Data
     runs-on: ubuntu-latest
+    if: github.repository == 'pypi-data/pypi-json-data'
     steps:
       - uses: actions/checkout@v3
         with:

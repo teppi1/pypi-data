@@ -13,6 +13,7 @@ jobs:
   bundle-data:
     name: Bundle Data
     runs-on: ubuntu-latest
+    if: github.repository == 'pypi-data/pypi-json-data'
     steps:
       - name: Install tools
         shell: bash
