@@ -1,0 +1,72 @@
+name: Bundle Data
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 1 * * *'
+
+concurrency: ci-bundle-${{ github.ref }}
+
+permissions:
+  contents: write
+
+jobs:
+  bundle-data:
+    name: Bundle Data
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          IFS=$'\n\t'
+
+          sudo apt install -y jq sqlite3 curl tar gzip pv wget build-essential
+      
+      - name: Cache Sqlite
+        id: cache-sqlite
+        uses: actions/cache@v3
+        with:
+          path: /usr/local/bin/sqlite3
+          key: ${{ runner.os }}-sqlite
+
+      - name: Setup sqlite
+        if: ${{ steps.cache-sqlite.outputs.cache-hit != 'true' }}
+        run: |
+          wget https://www.sqlite.org/2023/sqlite-autoconf-3410000.tar.gz -O sqlite.tar.gz
+
+          mkdir sqlite/
+          tar xf sqlite.tar.gz --strip-components=1 --directory=sqlite/
+          cd sqlite/
+          ./configure
+          make
+          sudo make install
+          
+      - name: Create
+        shell: bash
+        run: |
+          curl -L -sS https://github.com/pypi-data/pypi-json-data/archive/${{ github.sha }}.tar.gz |
+            tar -xOzf - --wildcards '*.json' --exclude 'serials.json' |
+            jq -rc 'values[] | del(.info.description)' | pv -c -f -i5 -l | gzip -9 > all_data.txt.gz;
+
+      - run: |
+          mkdir scripts/
+          wget https://raw.githubusercontent.com/pypi-data/pypi-json-data/${{ github.sha }}/scripts/schema.sql -O scripts/schema.sql
+          wget https://raw.githubusercontent.com/pypi-data/pypi-json-data/${{ github.sha }}/scripts/create_sqlite.sh
+          chmod +x create_sqlite.sh
+          ./create_sqlite.sh
+
+      - name: Get current time
+        uses: josStorer/get-current-time@v2
+        id: current-time
+        with:
+          format: YYYY-MM-DD
+          utcOffset: "+00:00"
+
+      - name: Publish
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: false
+          name: "${{ steps.current-time.outputs.formattedTime }}"
+          tag_name: "latest"
+          files: 'pypi-data.sqlite.gz'
+          body: Automated bundling of release data into a sqlite database. See the readme for more information.
