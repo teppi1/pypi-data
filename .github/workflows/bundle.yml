@@ -45,8 +45,8 @@ jobs:
         shell: bash
         run: |
           curl -L -sS https://github.com/pypi-data/pypi-json-data/archive/${{ github.sha }}.tar.gz |
-            tar -xOzf - --wildcards '*.json' --exclude 'serials.json' |
-            jq -rc 'values[] | del(.info.description)' | pv -c -f -i5 -l | gzip -9 > all_data.txt.gz;
+            tar -xOzf - --wildcards '*/release_data/*/*.json' |
+            jq -rc 'values[]' | pv -c -f -i5 -l | gzip > all_data.txt.gz;
 
       - run: |
           mkdir scripts/

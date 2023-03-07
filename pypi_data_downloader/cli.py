@@ -1,4 +1,5 @@
 import json
+import orjson
 import operator
 import xmlrpc.client
 from collections import Counter
@@ -36,7 +37,7 @@ def download_releases(directory, limit, concurrency):
 
     serials_path = directory / "serials.json"
     if serials_path.exists():
-        serials = json.loads(serials_path.read_text())
+        serials = orjson.loads(serials_path.read_bytes())
     else:
         serials = {}
 
@@ -75,7 +76,7 @@ def download_releases(directory, limit, concurrency):
             if not skip:
                 serials[name.lower()] = serial
 
-    serials_path.write_text(json.dumps(serials, indent=4, sort_keys=True))
+    serials_path.write_bytes(orjson.dumps(serials, option=orjson.SORT_KEYS))
 
 
 def process_package(directory, name, serial):
@@ -122,7 +123,7 @@ def process_package(directory, name, serial):
 
             modified = version_file.exists()
             if modified:
-                previous_data = json.loads(version_file.read_text())
+                previous_data = orjson.loads(version_file.read_bytes())
             else:
                 previous_data = {}
 
@@ -131,7 +132,7 @@ def process_package(directory, name, serial):
                 release_info["info"].pop("description", "")
 
             releases = {**previous_data, **releases}
-            json_bytes = json.dumps(releases, indent=4, sort_keys=True, ensure_ascii=False).encode()
+            json_bytes = orjson.dumps(releases, option=orjson.SORT_KEYS)
             version_file.write_bytes(json_bytes)
 
     return name, serial, skip, {
