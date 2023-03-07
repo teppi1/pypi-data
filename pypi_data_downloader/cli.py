@@ -76,7 +76,7 @@ def download_releases(directory, limit, concurrency):
             if not skip:
                 serials[name.lower()] = serial
 
-    serials_path.write_bytes(orjson.dumps(serials, option=orjson.SORT_KEYS))
+    serials_path.write_bytes(orjson.dumps(serials, option=orjson.OPT_SORT_KEYS))
 
 
 def process_package(directory, name, serial):
@@ -132,7 +132,7 @@ def process_package(directory, name, serial):
                 release_info["info"].pop("description", "")
 
             releases = {**previous_data, **releases}
-            json_bytes = orjson.dumps(releases, option=orjson.SORT_KEYS)
+            json_bytes = orjson.dumps(releases, option=orjson.OPT_SORT_KEYS)
             version_file.write_bytes(json_bytes)
 
     return name, serial, skip, {
