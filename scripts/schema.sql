@@ -13,10 +13,10 @@ CREATE table projects(
     project_url text,
     requires_python text,
     summary text,
-    yanked text,
+    yanked int,
     yanked_reason text,
-    classifiers any,
-    requires_dist any,
+    classifiers text,
+    requires_dist text,
     UNIQUE(name, version)
 );
 

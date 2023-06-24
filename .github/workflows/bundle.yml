@@ -51,8 +51,8 @@ jobs:
 
       - run: |
           mkdir scripts/
-          wget https://raw.githubusercontent.com/pypi-data/pypi-json-data/${{ github.sha }}/scripts/schema.sql -O scripts/schema.sql
-          wget https://raw.githubusercontent.com/pypi-data/pypi-json-data/${{ github.sha }}/scripts/create_sqlite.sh
+          wget -nv https://raw.githubusercontent.com/pypi-data/pypi-json-data/${{ github.sha }}/scripts/schema.sql -O scripts/schema.sql
+          wget -nv https://raw.githubusercontent.com/pypi-data/pypi-json-data/${{ github.sha }}/scripts/create_sqlite.sh
           chmod +x create_sqlite.sh
           ./create_sqlite.sh
 
@@ -67,8 +67,11 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           draft: false
-          name: "${{ steps.current-time.outputs.formattedTime }}"
+          name: "Latest Release"
           tag_name: "latest"
           target_commitish: "empty"
           files: 'pypi-data.sqlite.gz'
-          body: Automated bundling of release data into a sqlite database. See the readme for more information.
+          body: |
+            Automated bundling of release data into a sqlite database. 
+            Updated on ${{ steps.current-time.outputs.formattedTime }}
+            See the readme for more information.
