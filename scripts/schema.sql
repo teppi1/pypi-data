@@ -32,3 +32,4 @@ CREATE table urls(
     yanked_reason text,
     foreign key(project_id) REFERENCES projects(id)
 )
+CREATE INDEX urls_upload_time ON urls (upload_time)
