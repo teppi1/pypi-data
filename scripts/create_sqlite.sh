@@ -20,8 +20,7 @@ pv -N projects -c -f -i5 all_data.txt.gz | gzip -d | jq -R -r '. | fromjson | [i
                                     .info.platform, .info.project_url, .info.requires_python, .info.summary, .info.yanked, .info.yanked_reason, (.info.classifiers | tojson), (.info.requires_dist | tojson)] | @csv' > "$projects_fifo" &
 
 echo "Creating urls"
-# https://github.com/jqlang/jq/issues/2224 - we need to cast the upload time to an integer, is why we need to truncate the string to remove the fractional seconds.
-pv -N urls -c -f -i5 all_data.txt.gz | gzip -d | jq -R -r '. | fromjson | .urls[] | [input_line_number, .url, .upload_time_iso_8601 | [0:19] +"Z" | fromdateiso8601, .packagetype, .python_version, .requires_python, .size,
+pv -N urls -c -f -i5 all_data.txt.gz | gzip -d | jq -R -r '. | fromjson | .urls[] | [input_line_number, .url, .upload_time_iso_8601, .packagetype, .python_version, .requires_python, .size,
                                                                  if .yanked then 1 else 0 end, .yanked_reason] | @csv' > "$urls_fifo" &
 
 sqlite3 -csv <<EOF

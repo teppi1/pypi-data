@@ -23,7 +23,7 @@ CREATE table projects(
 CREATE table urls(
     project_id int,
     url text,
-    upload_time int,
+    upload_time text,
     package_type text,
     python_version text,
     requires_python text,
