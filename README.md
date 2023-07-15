@@ -1,10 +1,10 @@
-# PyPi Data
+# PyPI Data
 
-The contents of the PyPi JSON API for all packages, updated every 12 hours
+The contents of the PyPI JSON API for all packages, updated every 12 hours
 
 ## Why?
 
-Fetching bulk data from the PyPi API in bulk is non-trivial, and using the [BigQuery dataset](https://warehouse.pypa.io/api-reference/bigquery-datasets.html) requires using BigQuery. The entire package dataset is not large and easily fits into the memory of most developer machines, so it's much more fluid to explore the data with Pandas than the heavyweight (and sometimes expensive) BigQuery.
+Fetching bulk data from the PyPI API in bulk is non-trivial, and using the [BigQuery dataset](https://warehouse.pypa.io/api-reference/bigquery-datasets.html) requires using BigQuery. The entire package dataset is not large and easily fits into the memory of most developer machines, so it's much more fluid to explore the data with Pandas than the heavyweight (and sometimes expensive) BigQuery.
 
 ## Release data
 
